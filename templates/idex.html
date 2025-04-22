@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Predicción de Dígitos</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Sube una imagen para predecir el número</h1>
+        
+        <form id="imageForm" enctype="multipart/form-data">
+            <input type="file" id="fileInput" name="file" accept="image/*" required><br><br>
+            <button type="submit">Predecir</button>
+        </form>
+
+        <h2 id="predictionResult"></h2>
+    </div>
+
+    <script>
+        const form = document.getElementById("imageForm");
+        const predictionResult = document.getElementById("predictionResult");
+
+        form.addEventListener("submit", async (event) => {
+            event.preventDefault();
+
+            const fileInput = document.getElementById("fileInput");
+            const file = fileInput.files[0];
+            
+            const formData = new FormData();
+            formData.append("file", file);
+
+            try {
+                const response = await fetch("http://127.0.0.1:8000/predict/", {
+                    method: "POST",
+                    body: formData,
+                });
+
+                const data = await response.json();
+                predictionResult.textContent = `Número Predicho: ${data.predicted_number}`;
+            } catch (error) {
+                predictionResult.textContent = "Error al predecir la imagen";
+            }
+        });
+    </script>
+</body>
+</html>
